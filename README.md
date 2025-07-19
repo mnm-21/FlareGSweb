@@ -44,12 +44,12 @@ In this work, we present the first systematic effort to model and remove such re
 ## 🔬 Ablation Studies
 
 <img src="ICCV2025-Author-Kit-Feb/images/abalation.png" width="600px" alt="Ablation Study 1">
-<p><em>Ablation study demonstrating the effectiveness of different components in our framework.</em></p>
-<p><strong>Key Insights:</strong> The first ablation study validates the importance of each component in our pipeline, showing that depth guidance provides the most significant improvement in flare removal accuracy. The Uformer backbone combined with depth priors achieves better artifact suppression than traditional CNN architectures. Multi-view consistency further enhances the quality by leveraging temporal information from adjacent frames.</p>
+<p><em>Comparison of flare removal performance with and without depth information</em></p>
+<p><strong>Key Insights:</strong> As demonstrated in the figure, integrating LiDAR-derived depth information with RGB input substantially enhances reconstruction quality in areas severely affected by flare artifacts. The depth modality serves as a flare-invariant prior, enabling the model to accurately infer occluded object boundaries and structural details. Without depth information, the tree trunk nearly blends indistinguishably with the background, whereas the inclusion of depth cues makes the trunk structure significantly more prominent and well-defined.</p>
 
 <img src="ICCV2025-Author-Kit-Feb/images/abalation2.png" width="600px" alt="Ablation Study 2">
-<p><em>Additional ablation results showing the impact of depth guidance and multi-view synthesis.</em></p>
-<p><strong>Key Insights:</strong> The second ablation study demonstrates the synergistic effect of combining depth guidance with Gaussian splatting-based view synthesis. Depth information alone improves flare localization, while multi-view synthesis enhances photometric consistency across different viewpoints. The combination achieves optimal results by leveraging both spatial structure from depth and temporal consistency from multiple views.</p>
+<p><em>Stress test evaluation using synthetic large-scale ghost flare corruption</em></p>
+<p><strong>Key Insights:</strong> In this figure, the input RGB frame is synthetically corrupted with a large, opaque ghost flare for stress testing. While most scene content is visually obscured, the LiDAR modality preserves geometric contours of occluded structures such as the tree. Notably, a streetlight present in the RGB input—positioned in front of the tree—is absent in the LiDAR signal. Consequently, the Uformer output reconstructs the tree's structure but not the streetlight, suggesting that the model relies on flare-free depth cues for structural inference under extreme visual degradation.</p>
 
 ## 🎯 Downstream Task Performance
 
