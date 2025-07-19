@@ -102,7 +102,7 @@ If you find this work useful for your research, please cite our paper:
 
 ## 🤝 Acknowledgments
 
-We thank the ICCV 2025 reviewers for their valuable feedback. This work was supported by [Institution Names].
+We thank the ICCV 2025 reviewers for their valuable feedback. This work was supported by Computational Imaging Lab, IIT Madras.
 
 ## 📄 License
 
