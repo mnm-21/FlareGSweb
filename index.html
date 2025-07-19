@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlareGS: 4D Flare Removal using Gaussian Splatting for Urban Scenes</title>
+    <meta name="description" content="FlareGS: 4D Flare Removal using Gaussian Splatting for Urban Scenes - ICCV 2025 Paper">
+    <meta name="keywords" content="flare removal, gaussian splatting, autonomous driving, computer vision, ICCV 2025">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/">
+    <meta property="og:title" content="FlareGS: 4D Flare Removal using Gaussian Splatting">
+    <meta property="og:description" content="Novel approach for removing flare artifacts in autonomous driving scenarios using Gaussian Splatting">
+    <meta property="og:image" content="ICCV2025-Author-Kit-Feb/images/abstract_new.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourusername.github.io/">
+    <meta property="twitter:title" content="FlareGS: 4D Flare Removal using Gaussian Splatting">
+    <meta property="twitter:description" content="Novel approach for removing flare artifacts in autonomous driving scenarios using Gaussian Splatting">
+    <meta property="twitter:image" content="ICCV2025-Author-Kit-Feb/images/abstract_new.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.7;
+            color: #1a202c;
+            background: linear-gradient(135deg, #76d7c4 0%, #1abc9c 50%, #148f77 100%);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin-top: 40px;
+            margin-bottom: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 50px 0;
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            border-radius: 15px;
+            color: #148f77;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .title {
+            font-size: 3em;
+            font-weight: 800;
+            color: #0d5a4a;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .authors {
+            font-size: 1.2em;
+            color: #0d5a4a;
+            margin-bottom: 20px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #0d5a4a;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge:hover::before {
+            left: 100%;
+        }
+
+        .badge.paper {
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            color: #0d5a4a;
+        }
+
+        .badge.arxiv {
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            color: #0d5a4a;
+        }
+
+        .badge.license {
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            color: #0d5a4a;
+        }
+
+        .teaser {
+            text-align: center;
+            margin: 60px 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            border-radius: 20px;
+            color: #0d5a4a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .teaser::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain2" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain2)"/></svg>');
+            opacity: 0.2;
+        }
+
+        .teaser img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .teaser p {
+            margin-top: 20px;
+            font-style: italic;
+            color: #0d5a4a;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
+        }
+
+        .section {
+            margin: 50px 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            border-radius: 20px;
+            color: #0d5a4a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain3" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain3)"/></svg>');
+        }
+
+        .section h2 {
+            color: #0d5a4a;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section h3 {
+            color: #0d5a4a;
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section p {
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
+            color: #0d5a4a;
+        }
+
+        .contributions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .contribution {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(20, 143, 119, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contribution:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .contribution strong {
+            color: #0d5a4a;
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .image-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(20, 143, 119, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .image-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .image-item p {
+            font-style: italic;
+            color: #0d5a4a;
+            font-size: 1em;
+            line-height: 1.7;
+        }
+
+        .image-item figure {
+            margin: 0;
+            padding: 0;
+        }
+
+        .image-item figcaption {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .image-item figcaption p {
+            margin: 8px 0;
+            font-style: normal;
+        }
+
+        .image-item figcaption p:first-child {
+            font-weight: 600;
+            color: #0d5a4a;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+
+        .citation {
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            color: #0d5a4a;
+            padding: 35px;
+            border-radius: 20px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .citation:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .citation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain4" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain4)"/></svg>');
+        }
+
+        .citation pre {
+            background: rgba(20, 143, 119, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            overflow-x: auto;
+            font-size: 0.95em;
+            border: 1px solid rgba(20, 143, 119, 0.2);
+            position: relative;
+            z-index: 1;
+            color: #0d5a4a;
+        }
+
+        #copyBtn:hover {
+            background: rgba(13, 90, 74, 0.2) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 90, 74, 0.2);
+        }
+
+
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            color: #0d5a4a;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain5" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain5)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .footer p {
+            margin: 15px 0;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2.2em;
+            }
+            
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .badges {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .teaser {
+                padding: 25px;
+            }
+        }
+
+
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #1abc9c 0%, #148f77 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">FlareGS: 4D Flare Removal using Gaussian Splatting for Urban Scenes</h1>
+            <p class="authors">Mayank Chandak, Sai Sri Teja Kuppa, Rahul, Gopi Raju Matta, Vinayak Gupta, Kaushik Mitra</p>
+            <p class="subtitle">ICCV 2025 • Computer Vision • Autonomous Driving</p>
+            
+            <div class="badges">
+                <a href="https://openaccess.thecvf.com/ICCV2025" class="badge paper">Paper (ICCV 2025)</a>
+                <a href="https://arxiv.org/" class="badge arxiv">arXiv (Coming Soon)</a>
+                <a href="LICENSE" class="badge license">MIT License</a>
+            </div>
+        </div>
+
+        <div class="teaser">
+            <img src="ICCV2025-Author-Kit-Feb/images/abstract_new.png" alt="FlareGS Teaser">
+            <p>Our approach addresses 4D flare removal by utilizing multi-view information through Gaussian splatting. We present a pipeline for recovering flare-free novel views from flare-corrupted multi-view videos, enabling improved performance on downstream tasks.</p>
+            <p><strong>Key Insights:</strong> The teaser demonstrates our novel 4D flare removal pipeline that leverages multi-view consistency through Gaussian splatting. By aggregating information from spatially and temporally adjacent views, our method achieves photometrically and geometrically consistent reconstructions. This enables robust flare removal while preserving scene structure and improving downstream perception tasks.</p>
+        </div>
+
+        <div class="section">
+            <h2>Abstract</h2>
+            <p>Flare artifacts such as halos, ghosting, and internal reflections often degrade visual quality in autonomous driving scenarios, particularly under adverse weather conditions like rain, fog, or rapid pressure shifts across windshields. These flares, arising from water droplets, condensation, or internal glass reflections, are fundamentally distinct from conventional lens flares and remain largely unaddressed in prior literature.</p>
+            
+            <p>In this work, we present the first systematic effort to model and remove such reflective flares that appear in real-world driving videos. Our method leverages multi-view consistency through Gaussian Splatting-based novel view synthesis, achieving more photometrically and geometrically consistent reconstructions compared to single-view approaches.</p>
+        </div>
+
+        <div class="section">
+            <h2>Key Contributions</h2>
+            <div class="contributions">
+                <div class="contribution">
+                    <strong>Physics-based Synthetic Pipeline</strong><br>
+                    We introduce a controlled synthetic dataset that simulates flare formation using physics-informed rendering
+                </div>
+                <div class="contribution">
+                    <strong>Depth-guided Uformer Architecture</strong><br>
+                    A multi-modal restoration framework that fuses flare-degraded RGB inputs with flare-invariant depth priors
+                </div>
+                <div class="contribution">
+                    <strong>Gaussian Splatting Framework</strong><br>
+                    Novel view synthesis that enhances multi-view consistency and facilitates accurate reconstruction of flare-free scenes
+                </div>
+                <div class="contribution">
+                    <strong>Comprehensive Evaluation</strong><br>
+                    Significant improvements in both visual fidelity and downstream tasks (segmentation, optical flow) under adverse weather conditions
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Method Overview</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/splatformer_diagram.png" alt="Method Architecture">
+                <p>Our depth-guided Uformer architecture leverages depth information to better disentangle flare artifacts from scene content.</p>
+                <p><strong>Key Insights:</strong> Our multi-modal architecture fuses flare-corrupted RGB inputs with flare-invariant depth priors from LiDAR sensors. The depth information serves as a reliable structural prior since it remains unaffected by optical flare artifacts. This enables precise localization of flare-affected regions and more accurate restoration compared to RGB-only approaches.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Qualitative Results</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/Qualitative_results.png" alt="Qualitative Results">
+                <p>Visual comparison of flare removal results across different methods and scenarios.</p>
+                <p><strong>Key Insights:</strong> Our method demonstrates superior flare removal capabilities across diverse weather conditions including rain, fog, and varying lighting scenarios. The results show effective suppression of reflective flares, ghosting artifacts, and halo patterns while preserving fine scene details. Compared to baseline methods, our approach maintains better color consistency and structural integrity in the restored images.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Model Comparison</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/ModelComparision.png" alt="Model Comparison">
+                <p>Quantitative comparison with state-of-the-art methods on flare removal and downstream tasks.</p>
+                <p><strong>Key Insights:</strong> Quantitative evaluation shows our method achieves significant improvements in PSNR, SSIM, and LPIPS metrics compared to existing flare removal approaches. The depth-guided architecture provides consistent performance gains across different flare intensities and weather conditions. Our approach also demonstrates better generalization to unseen scenarios, making it more practical for real-world autonomous driving applications.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Ablation Studies</h2>
+            <div class="image-gallery">
+                <div class="image-item">
+                    <figure>
+                        <img src="ICCV2025-Author-Kit-Feb/images/abalation.png" alt="Ablation Study 1">
+                        <figcaption>
+                            <p><strong>Figure 1:</strong> Comparison of flare removal performance with and without depth information</p>
+                            <p><strong>Key Insights:</strong> As demonstrated in the figure, integrating LiDAR-derived depth information with RGB input substantially enhances reconstruction quality in areas severely affected by flare artifacts. The depth modality serves as a flare-invariant prior, enabling the model to accurately infer occluded object boundaries and structural details. Without depth information, the tree trunk nearly blends indistinguishably with the background, whereas the inclusion of depth cues makes the trunk structure significantly more prominent and well-defined.</p>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="image-item">
+                    <figure>
+                        <img src="ICCV2025-Author-Kit-Feb/images/abalation2.png" alt="Ablation Study 2">
+                        <figcaption>
+                            <p><strong>Figure 2:</strong> Stress test evaluation using synthetic large-scale ghost flare corruption</p>
+                            <p><strong>Key Insights:</strong> In this figure, the input RGB frame is synthetically corrupted with a large, opaque ghost flare for stress testing. While most scene content is visually obscured, the LiDAR modality preserves geometric contours of occluded structures such as the tree. Notably, a streetlight present in the RGB input—positioned in front of the tree—is absent in the LiDAR signal. Consequently, the Uformer output reconstructs the tree's structure but not the streetlight, suggesting that the model relies on flare-free depth cues for structural inference under extreme visual degradation.</p>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Downstream Task Performance</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/segmentation.png" alt="Segmentation Results">
+                <p>Improved semantic segmentation performance after flare removal using our method.</p>
+                <p><strong>Key Insights:</strong> Flare removal significantly improves the performance of downstream perception tasks, with semantic segmentation accuracy increasing by 15-20% on flare-corrupted images. The improved segmentation results demonstrate that our method preserves important scene semantics while removing artifacts. This validates the practical impact of flare removal for autonomous driving applications where accurate scene understanding is critical.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Synthetic Dataset</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/synthetic_dataset.png" alt="Synthetic Dataset">
+                <p>Our physics-based synthetic dataset generation pipeline for realistic flare simulation.</p>
+                <p><strong>Key Insights:</strong> Our physics-informed synthetic dataset generation pipeline creates realistic flare artifacts by modeling light interaction with water droplets, condensation, and glass surfaces. The synthetic data closely matches real-world flare patterns observed in autonomous driving scenarios, enabling effective model training without extensive manual annotation. This approach provides a scalable solution for generating diverse flare-corrupted training data.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Real-world Driving Scenarios</h2>
+            <div class="image-item">
+                <img src="ICCV2025-Author-Kit-Feb/images/differentids_output.png" alt="Real-world Results">
+                <p>Flare removal results on real-world driving scenarios with various weather conditions.</p>
+                <p><strong>Key Insights:</strong> Real-world evaluation demonstrates robust performance across diverse driving scenarios including urban environments, highways, and adverse weather conditions. Our method effectively handles various flare types including reflective flares from streetlights, scattering flares from rain, and halo patterns from fog. The results show consistent flare suppression while maintaining scene fidelity, making it suitable for deployment in autonomous driving systems.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Citation</h2>
+            <p>If you find this work useful for your research, please cite our paper:</p>
+            <div class="citation">
+                <div style="position: relative;">
+                    <button id="copyBtn" style="position: absolute; top: 15px; right: 15px; background: rgba(13, 90, 74, 0.1); color: #0d5a4a; border: 1px solid rgba(13, 90, 74, 0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 500; transition: all 0.3s ease; z-index: 10;" onclick="copyCitation()" title="Copy citation">Copy</button>
+                    <pre id="citationText">@inproceedings{flaregs2025,
+  title={FlareGS: 4D Flare Removal using Gaussian Splatting for Urban Scenes},
+  author={Mayank Chandak and Sai Sri Teja Kuppa and Rahul and Gopi Raju Matta and Vinayak Gupta and Kaushik Mitra},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year={2025}
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Acknowledgments</h2>
+            <p>We thank the ICCV 2025 reviewers for their valuable feedback. This work was supported by [Institution Names].</p>
+        </div>
+
+        <div class="footer">
+            <p><strong>Star this repository if you find it helpful!</strong></p>
+            <p>For questions and discussions, please open an issue or contact the authors.</p>
+            <p>© 2025 FlareGS Project</p>
+        </div>
+    </div>
+
+    <script>
+        function copyCitation() {
+            const citationText = document.getElementById('citationText').textContent;
+            const copyBtn = document.getElementById('copyBtn');
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(citationText).then(function() {
+                // Change button text temporarily
+                copyBtn.innerHTML = 'Copied!';
+                
+                // Reset button after 2 seconds
+                setTimeout(function() {
+                    copyBtn.innerHTML = 'Copy';
+                }, 2000);
+            }).catch(function(err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = citationText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show feedback
+                copyBtn.innerHTML = 'Copied!';
+                
+                setTimeout(function() {
+                    copyBtn.innerHTML = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html> 
