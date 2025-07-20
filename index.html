@@ -36,8 +36,8 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.7;
-            color: #1a202c;
-            background: linear-gradient(135deg, #76d7c4 0%, #1abc9c 50%, #148f77 100%);
+            color: #065084;
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
             min-height: 100vh;
             font-weight: 400;
         }
@@ -46,21 +46,21 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.15);
             margin-top: 40px;
             margin-bottom: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px rgba(50, 10, 107, 0.3);
+            backdrop-filter: blur(15px);
         }
 
         .header {
             text-align: center;
             margin-bottom: 60px;
             padding: 50px 0;
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
             border-radius: 15px;
-            color: #148f77;
+            color: white;
             position: relative;
             overflow: hidden;
         }
@@ -79,9 +79,9 @@
         .title {
             font-size: 3em;
             font-weight: 800;
-            color: #0d5a4a;
+            color: white;
             margin-bottom: 15px;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-shadow: 0 4px 8px rgba(50, 10, 107, 0.3);
             position: relative;
             z-index: 1;
             letter-spacing: -0.02em;
@@ -89,7 +89,7 @@
 
         .authors {
             font-size: 1.2em;
-            color: #0d5a4a;
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 20px;
             font-weight: 500;
             position: relative;
@@ -98,7 +98,7 @@
 
         .subtitle {
             font-size: 1.3em;
-            color: #0d5a4a;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 30px;
             position: relative;
             z-index: 1;
@@ -122,9 +122,12 @@
             font-weight: 600;
             font-size: 0.95em;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(50, 10, 107, 0.3);
             position: relative;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .badge::before {
@@ -140,7 +143,8 @@
 
         .badge:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(50, 10, 107, 0.4);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .badge:hover::before {
@@ -148,27 +152,27 @@
         }
 
         .badge.paper {
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
-            color: #0d5a4a;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
         }
 
         .badge.arxiv {
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
-            color: #0d5a4a;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
         }
 
         .badge.license {
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
-            color: #0d5a4a;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
         }
 
         .teaser {
             text-align: center;
             margin: 60px 0;
             padding: 40px;
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
             border-radius: 20px;
-            color: #0d5a4a;
+            color: white;
             position: relative;
             overflow: hidden;
         }
@@ -196,7 +200,7 @@
         .teaser p {
             margin-top: 20px;
             font-style: italic;
-            color: #0d5a4a;
+            color: rgba(255, 255, 255, 0.95);
             font-size: 1.1em;
             position: relative;
             z-index: 1;
@@ -206,12 +210,12 @@
         .section {
             margin: 50px 0;
             padding: 40px;
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
             border-radius: 20px;
-            color: #0d5a4a;
+            color: white;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(50, 10, 107, 0.2);
         }
 
         .section::before {
@@ -225,7 +229,7 @@
         }
 
         .section h2 {
-            color: #0d5a4a;
+            color: white;
             font-size: 2.2em;
             margin-bottom: 25px;
             font-weight: 700;
@@ -234,7 +238,7 @@
         }
 
         .section h3 {
-            color: #0d5a4a;
+            color: white;
             font-size: 1.5em;
             margin: 30px 0 20px 0;
             position: relative;
@@ -245,7 +249,7 @@
             position: relative;
             z-index: 1;
             line-height: 1.8;
-            color: #0d5a4a;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .contributions {
@@ -256,10 +260,10 @@
         }
 
         .contribution {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
             padding: 25px;
             border-radius: 15px;
-            border: 1px solid rgba(20, 143, 119, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             position: relative;
@@ -268,12 +272,12 @@
 
         .contribution:hover {
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 30px rgba(50, 10, 107, 0.3);
         }
 
         .contribution strong {
-            color: #0d5a4a;
+            color: white;
             font-size: 1.2em;
             display: block;
             margin-bottom: 10px;
@@ -288,10 +292,10 @@
 
         .image-item {
             text-align: center;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
             padding: 30px;
             border-radius: 20px;
-            border: 1px solid rgba(20, 143, 119, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             position: relative;
@@ -300,8 +304,8 @@
 
         .image-item:hover {
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 40px rgba(50, 10, 107, 0.3);
         }
 
         .image-item img {
@@ -313,7 +317,7 @@
 
         .image-item p {
             font-style: italic;
-            color: #0d5a4a;
+            color: rgba(255, 255, 255, 0.95);
             font-size: 1em;
             line-height: 1.7;
         }
@@ -335,18 +339,18 @@
 
         .image-item figcaption p:first-child {
             font-weight: 600;
-            color: #0d5a4a;
+            color: white;
             font-size: 1.1em;
             margin-bottom: 12px;
         }
 
         .citation {
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
-            color: #0d5a4a;
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
+            color: white;
             padding: 35px;
             border-radius: 20px;
             margin: 40px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(50, 10, 107, 0.3);
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -354,7 +358,7 @@
 
         .citation:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(50, 10, 107, 0.4);
         }
 
         .citation::before {
@@ -368,31 +372,29 @@
         }
 
         .citation pre {
-            background: rgba(20, 143, 119, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             padding: 25px;
             border-radius: 15px;
             overflow-x: auto;
             font-size: 0.95em;
-            border: 1px solid rgba(20, 143, 119, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 1;
-            color: #0d5a4a;
+            color: white;
         }
 
         #copyBtn:hover {
-            background: rgba(13, 90, 74, 0.2) !important;
+            background: rgba(255, 255, 255, 0.2) !important;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(13, 90, 74, 0.2);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
         }
-
-
 
         .footer {
             text-align: center;
             margin-top: 60px;
             padding: 40px;
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
-            color: #0d5a4a;
+            background: linear-gradient(135deg, #065084 0%, #320A6B 100%);
+            color: white;
             border-radius: 20px;
             position: relative;
             overflow: hidden;
@@ -444,8 +446,6 @@
             }
         }
 
-
-
         /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
@@ -462,12 +462,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #d1f2eb 0%, #d1f2eb 100%);
+            background: #320A6B;
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #1abc9c 0%, #148f77 100%);
+            background: #065084;
         }
     </style>
 </head>
@@ -603,7 +603,7 @@
             <p>If you find this work useful for your research, please cite our paper:</p>
             <div class="citation">
                 <div style="position: relative;">
-                    <button id="copyBtn" style="position: absolute; top: 15px; right: 15px; background: rgba(13, 90, 74, 0.1); color: #0d5a4a; border: 1px solid rgba(13, 90, 74, 0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 500; transition: all 0.3s ease; z-index: 10;" onclick="copyCitation()" title="Copy citation">Copy</button>
+                    <button id="copyBtn" style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 500; transition: all 0.3s ease; z-index: 10;" onclick="copyCitation()" title="Copy citation">Copy</button>
                     <pre id="citationText">@inproceedings{flaregs2025,
   title={FlareGS: 4D Flare Removal using Gaussian Splatting for Urban Scenes},
   author={Mayank Chandak and Sai Sri Teja Kuppa and Rahul and Gopi Raju Matta and Vinayak Gupta and Kaushik Mitra},
